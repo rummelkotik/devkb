@@ -1,0 +1,7 @@
+services:
+  devkb:
+    build: .
+    container_name: devkb
+    restart: unless-stopped
+    ports:
+      - "8090:80"

@@ -1,0 +1,125 @@
+import type { SnippetItem } from './linux';
+
+export const DOCKER_SNIPPETS: SnippetItem[] = [
+  // --- Контейнеры: Базовые команды ---
+  { id: 'd1', subCategory: 'Контейнеры', code: 'docker ps', desc: 'Список всех активных (работающих) контейнеров' },
+  { id: 'd2', subCategory: 'Контейнеры', code: 'docker ps -a', desc: 'Список всех контейнеров, включая остановленные' },
+  { id: 'd3', subCategory: 'Контейнеры', code: 'docker ps -q', desc: 'Вывести только ID работающих контейнеров' },
+  { id: 'd4', subCategory: 'Контейнеры', code: 'docker ps -a -q', desc: 'Вывести только ID всех существующих контейнеров' },
+  { id: 'd5', subCategory: 'Контейнеры', code: 'docker run -d --name my-app -p 8080:80 nginx:alpine', desc: 'Запуск контейнера в фоне (-d) с именем и пробросом порта' },
+  { id: 'd6', subCategory: 'Контейнеры', code: 'docker run --rm -it alpine sh', desc: 'Одноразовый интерактивный запуск: удалится сразу после выхода' },
+  { id: 'd7', subCategory: 'Контейнеры', code: 'docker start <имя_или_id>', desc: 'Запустить ранее остановленный контейнер' },
+  { id: 'd8', subCategory: 'Контейнеры', code: 'docker stop <имя_или_id>', desc: 'Плавная остановка контейнера с отправкой SIGTERM (таймаут 10 сек)' },
+  { id: 'd9', subCategory: 'Контейнеры', code: 'docker stop -t 30 <имя>', desc: 'Остановка с кастомным таймаутом перед жестким SIGKILL' },
+  { id: 'd10', subCategory: 'Контейнеры', code: 'docker restart <имя>', desc: 'Перезапустить работающий или упавший контейнер' },
+  { id: 'd11', subCategory: 'Контейнеры', code: 'docker kill <имя>', desc: 'Мгновенное принудительное завершение контейнера (SIGKILL)' },
+  { id: 'd12', subCategory: 'Контейнеры', code: 'docker pause <имя>', desc: 'Приостановить все процессы внутри контейнера' },
+  { id: 'd13', subCategory: 'Контейнеры', code: 'docker unpause <имя>', desc: 'Возобновить выполнение приостановленных процессов' },
+  { id: 'd14', subCategory: 'Контейнеры', code: 'docker rm <имя>', desc: 'Удалить остановленный контейнер' },
+  { id: 'd15', subCategory: 'Контейнеры', code: 'docker rm -f <имя>', desc: 'Принудительно остановить и удалить работающий контейнер' },
+  { id: 'd16', subCategory: 'Контейнеры', code: 'docker rm -f $(docker ps -a -q)', desc: 'Остановить и удалить абсолютно все контейнеры в системе' },
+  { id: 'd17', subCategory: 'Контейнеры', code: 'docker container prune -f', desc: 'Удалить все остановленные контейнеры одной командой' },
+  { id: 'd18', subCategory: 'Контейнеры', code: 'docker rename <старое_имя> <новое_имя>', desc: 'Переименовать существующий контейнер' },
+
+  // --- Выполнение и отладка (Exec & Logs) ---
+  { id: 'd19', subCategory: 'Отладка', code: 'docker exec -it <имя> sh', desc: 'Войти в интерактивную оболочку sh внутри работающего контейнера' },
+  { id: 'd20', subCategory: 'Отладка', code: 'docker exec -it <имя> bash', desc: 'Войти в bash оболочку контейнера' },
+  { id: 'd21', subCategory: 'Отладка', code: 'docker exec -u 0 -it <имя> sh', desc: 'Войти внутрь контейнера с правами root (UID 0)' },
+  { id: 'd22', subCategory: 'Отладка', code: 'docker exec -it <имя> env', desc: 'Посмотреть все переменные окружения запущенного контейнера' },
+  { id: 'd23', subCategory: 'Отладка', code: 'docker logs <имя>', desc: 'Вывести весь накопленный лог вывода контейнера' },
+  { id: 'd24', subCategory: 'Отладка', code: 'docker logs -f --tail 100 <имя>', desc: 'Следить за логами контейнера в реальном времени (последние 100 строк)' },
+  { id: 'd25', subCategory: 'Отладка', code: 'docker logs -t --since 30m <имя>', desc: 'Показать логи с таймстемпами за последние 30 минут' },
+  { id: 'd26', subCategory: 'Отладка', code: 'docker top <имя>', desc: 'Показать список активных процессов, запущенных внутри контейнера' },
+  { id: 'd27', subCategory: 'Отладка', code: 'docker stats', desc: 'Мониторинг потребления CPU, памяти, диска и сети по всем контейнерам' },
+  { id: 'd28', subCategory: 'Отладка', code: 'docker stats --no-stream', desc: 'Единоразовый снимок метрик ресурсов без постоянного обновления' },
+  { id: 'd29', subCategory: 'Отладка', code: 'docker diff <имя>', desc: 'Показать все изменения файловой системы контейнера относительно образа' },
+  { id: 'd30', subCategory: 'Отладка', code: 'docker events', desc: 'Слушать системные события Docker демона в реальном времени' },
+
+  // --- Копирование и Инспекция ---
+  { id: 'd31', subCategory: 'Инспекция', code: 'docker inspect <имя>', desc: 'Полная JSON-конфигурация контейнера, сетей и маунтов' },
+  { id: 'd32', subCategory: 'Инспекция', code: "docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' <имя>", desc: 'Узнать точный внутренний IP-адрес контейнера' },
+  { id: 'd33', subCategory: 'Инспекция', code: "docker inspect -f '{{.State.Status}}' <имя>", desc: 'Получить текущий статус состояния контейнера (running, exited)' },
+  { id: 'd34', subCategory: 'Инспекция', code: "docker inspect -f '{{json .Mounts}}' <имя>", desc: 'Получить информацию о смонтированных томах в JSON' },
+  { id: 'd35', subCategory: 'Инспекция', code: 'docker port <имя>', desc: 'Показать соответствие портов контейнера и хост-системы' },
+  { id: 'd36', subCategory: 'Инспекция', code: 'docker cp file.txt <имя>:/app/file.txt', desc: 'Скопировать локальный файл с хоста внутрь контейнера' },
+  { id: 'd37', subCategory: 'Инспекция', code: 'docker cp <имя>:/app/logs.txt ./logs.txt', desc: 'Скопировать файл из контейнера на хост-машину' },
+  { id: 'd38', subCategory: 'Инспекция', code: 'docker commit <имя> my-custom-image:v1', desc: 'Создать новый образ из текущего состояния работающего контейнера' },
+
+  // --- Образы (Images) ---
+  { id: 'd39', subCategory: 'Образы', code: 'docker images', desc: 'Список всех скачанных и локально собранных образов' },
+  { id: 'd40', subCategory: 'Образы', code: 'docker images -a', desc: 'Показать все образы, включая промежуточные слои' },
+  { id: 'd41', subCategory: 'Образы', code: 'docker pull node:20-alpine', desc: 'Скачать образ из Docker Hub' },
+  { id: 'd42', subCategory: 'Образы', code: 'docker push myuser/my-app:1.0', desc: 'Загрузить образ в удаленный Docker Registry' },
+  { id: 'd43', subCategory: 'Образы', code: 'docker build -t my-app:latest .', desc: 'Собрать Docker-образ из Dockerfile в текущей папке' },
+  { id: 'd44', subCategory: 'Образы', code: 'docker build -t my-app:latest -f Dockerfile.prod .', desc: 'Собрать образ с явным указанием пути к конкретному Dockerfile' },
+  { id: 'd45', subCategory: 'Образы', code: 'docker build --no-cache -t my-app:latest .', desc: 'Сборка образа с нуля без использования кэша слоев' },
+  { id: 'd46', subCategory: 'Образы', code: 'docker build --build-arg NODE_ENV=production .', desc: 'Передать аргументы сборки (ARG) в Dockerfile' },
+  { id: 'd47', subCategory: 'Образы', code: 'docker tag my-app:latest my-app:v1.2.0', desc: 'Присвоить существующему образу новый тег или псевдоним' },
+  { id: 'd48', subCategory: 'Образы', code: 'docker rmi <image_id>', desc: 'Удалить образ с хоста' },
+  { id: 'd49', subCategory: 'Образы', code: 'docker rmi -f <image_id>', desc: 'Принудительно удалить образ, даже если есть зависимые контейнеры' },
+  { id: 'd50', subCategory: 'Образы', code: 'docker image prune -a', desc: 'Удалить все неиспользуемые контейнерами образы' },
+  { id: 'd51', subCategory: 'Образы', code: 'docker history node:20-alpine', desc: 'Посмотреть историю создания слоев и размер каждого шага' },
+  { id: 'd52', subCategory: 'Образы', code: 'docker save -o app.tar my-app:latest', desc: 'Экспортировать образ в tar-архив для переноса без интернета' },
+  { id: 'd53', subCategory: 'Образы', code: 'docker load -i app.tar', desc: 'Загрузить образ в локальный Docker из tar-архива' },
+
+  // --- Тома и Хранилище (Volumes) ---
+  { id: 'd54', subCategory: 'Тома', code: 'docker volume ls', desc: 'Список всех именованных томов Docker' },
+  { id: 'd55', subCategory: 'Тома', code: 'docker volume create my-data', desc: 'Создать новый именованный том' },
+  { id: 'd56', subCategory: 'Тома', code: 'docker volume inspect my-data', desc: 'Посмотреть информацию и путь точки монтирования тома на хосте' },
+  { id: 'd57', subCategory: 'Тома', code: 'docker volume rm my-data', desc: 'Удалить неиспользуемый том' },
+  { id: 'd58', subCategory: 'Тома', code: 'docker volume prune -f', desc: 'Удалить все тома, которые не подключены ни к одному контейнеру' },
+  { id: 'd59', subCategory: 'Тома', code: 'docker run -v my-data:/var/lib/mysql mysql', desc: 'Подключить именованный том к контейнеру' },
+  { id: 'd60', subCategory: 'Тома', code: 'docker run -v $(pwd):/app -w /app node npm start', desc: 'Смонтировать текущую папку хоста внутрь (Bind Mount)' },
+  { id: 'd61', subCategory: 'Тома', code: 'docker run -v /host/dir:/container/dir:ro nginx', desc: 'Монтирование папки в режиме только для чтения (:ro)' },
+
+  // --- Сети (Networks) ---
+  { id: 'd62', subCategory: 'Сети', code: 'docker network ls', desc: 'Список всех доступных сетей Docker' },
+  { id: 'd63', subCategory: 'Сети', code: 'docker network create my-net', desc: 'Создать пользовательскую bridge-сеть с поддержкой DNS по именам' },
+  { id: 'd64', subCategory: 'Сети', code: 'docker network create --subnet 172.20.0.0/16 my-net', desc: 'Создать сеть с явно заданной подсетью' },
+  { id: 'd65', subCategory: 'Сети', code: 'docker network inspect my-net', desc: 'Просмотреть подключенные к сети контейнеры и их IP' },
+  { id: 'd66', subCategory: 'Сети', code: 'docker network connect my-net container2', desc: 'Подключить работающий контейнер к сети на лету' },
+  { id: 'd67', subCategory: 'Сети', code: 'docker network disconnect my-net container2', desc: 'Отключить контейнер от указанной сети' },
+  { id: 'd68', subCategory: 'Сети', code: 'docker network rm my-net', desc: 'Удалить сеть' },
+  { id: 'd69', subCategory: 'Сети', code: 'docker network prune -f', desc: 'Удалить все неиспользуемые пользовательские сети' },
+  { id: 'd70', subCategory: 'Сети', code: 'docker run --network host nginx', desc: 'Использовать сеть хоста напрямую без NAT изоляции (--network host)' },
+
+  // --- Docker Compose: Управление ---
+  { id: 'd71', subCategory: 'Compose', code: 'docker compose up -d', desc: 'Собрать, создать и запустить все сервисы в фоне' },
+  { id: 'd72', subCategory: 'Compose', code: 'docker compose down', desc: 'Остановить и удалить контейнеры, сети и анонимные тома стека' },
+  { id: 'd73', subCategory: 'Compose', code: 'docker compose down -v', desc: 'Остановить стек и полностью стереть все именованные тома базы данных' },
+  { id: 'd74', subCategory: 'Compose', code: 'docker compose ps', desc: 'Посмотреть статус сервисов текущего compose проекта' },
+  { id: 'd75', subCategory: 'Compose', code: 'docker compose logs -f', desc: 'Смотреть объединенный лог всех сервисов в реальном времени' },
+  { id: 'd76', subCategory: 'Compose', code: 'docker compose logs -f web', desc: 'Смотреть логи конкретного сервиса с именем web' },
+  { id: 'd77', subCategory: 'Compose', code: 'docker compose restart', desc: 'Перезапустить все контейнеры в стеке' },
+  { id: 'd78', subCategory: 'Compose', code: 'docker compose restart nginx', desc: 'Перезапустить только сервис nginx' },
+  { id: 'd79', subCategory: 'Compose', code: 'docker compose stop', desc: 'Остановить сервисы без удаления контейнеров' },
+  { id: 'd80', subCategory: 'Compose', code: 'docker compose start', desc: 'Запустить ранее остановленные сервисы compose' },
+  { id: 'd81', subCategory: 'Compose', code: 'docker compose build', desc: 'Собрать или пересобрать образы сервисов по их Dockerfile' },
+  { id: 'd82', subCategory: 'Compose', code: 'docker compose build --no-cache', desc: 'Пересобрать все сервисы с нуля без кэша' },
+  { id: 'd83', subCategory: 'Compose', code: 'docker compose pull', desc: 'Скачать свежие версии образов, указанных в compose файле' },
+  { id: 'd84', subCategory: 'Compose', code: 'docker compose up -d --build', desc: 'Собрать изменения кода и перезапустить контейнеры одной командой' },
+  { id: 'd85', subCategory: 'Compose', code: 'docker compose exec web sh', desc: 'Открыть терминал в запущенном сервисе web' },
+  { id: 'd86', subCategory: 'Compose', code: 'docker compose run --rm web npm test', desc: 'Запустить одноразовую команду в сервисе и удалить контейнер' },
+  { id: 'd87', subCategory: 'Compose', code: 'docker compose config', desc: 'Валидировать синтаксис и вывести итоговую структуру compose файла' },
+  { id: 'd88', subCategory: 'Compose', code: 'docker compose -f docker-compose.prod.yml up -d', desc: 'Запустить стек с указанием альтернативного файла конфигурации' },
+
+  // --- Очистка и Обслуживание (Cleanup) ---
+  { id: 'd89', subCategory: 'Очистка', code: 'docker system df', desc: 'Показать объем занятого дискового пространства контейнерами, образами и томами' },
+  { id: 'd90', subCategory: 'Очистка', code: 'docker system prune', desc: 'Удалить неиспользуемые контейнеры, сети и висячие (dangling) образы' },
+  { id: 'd91', subCategory: 'Очистка', code: 'docker system prune -a --volumes', desc: 'Глубокая очистка системы: удаляет абсолютно все неактивные образы и тома' },
+  { id: 'd92', subCategory: 'Очистка', code: 'docker builder prune -a', desc: 'Полностью очистить кэш сборок BuildKit' },
+
+  // --- Безопасность и Ресурсы ---
+  { id: 'd93', subCategory: 'Ресурсы', code: 'docker run -m 512m --cpus="1.5" nginx', desc: 'Ограничить контейнер 512 МБ оперативной памяти и 1.5 ядрами CPU' },
+  { id: 'd94', subCategory: 'Ресурсы', code: 'docker run --restart unless-stopped nginx', desc: 'Автоматический перезапуск контейнера при сбоях и ребуте сервера' },
+  { id: 'd95', subCategory: 'Ресурсы', code: 'docker run --read-only nginx', desc: 'Запустить контейнер с файловой системой только для чтения' },
+  { id: 'd96', subCategory: 'Ресурсы', code: 'docker run --cap-drop ALL nginx', desc: 'Сбросить все привилегии ядра Linux внутри контейнера' },
+  { id: 'd97', subCategory: 'Ресурсы', code: 'docker run --security-opt=no-new-privileges nginx', desc: 'Запретить процессам в контейнере повышать привилегии через SUID' },
+
+  // --- Реестры и Авторизация (Registry) ---
+  { id: 'd98', subCategory: 'Реестр', code: 'docker login', desc: 'Авторизоваться в Docker Hub через терминал' },
+  { id: 'd99', subCategory: 'Реестр', code: 'docker login ghcr.io -u USER -p TOKEN', desc: 'Авторизоваться в GitHub Container Registry' },
+  { id: 'd100', subCategory: 'Реестр', code: 'docker logout', desc: 'Выйти из текущей учетной записи реестра' },
+  { id: 'd101', subCategory: 'Реестр', code: 'docker search nginx', desc: 'Поиск официальных и пользовательских образов в Docker Hub' },
+  { id: 'd102', subCategory: 'Реестр', code: 'docker info', desc: 'Подробная системная информация о версии демона, драйвере хранилища и ядра' }
+];
