@@ -14,7 +14,9 @@ import {
   Cpu, 
   Database,
   Sparkles,
-  Command
+  Command,
+  Menu,
+  X
 } from 'lucide-react';
 
 const ICON_MAP: Record<string, React.ReactNode> = {
@@ -38,13 +40,14 @@ export default function App() {
   const [activeSubCat, setActiveSubCat] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   const totalSnippets = useMemo(() => {
     return CATEGORIES.reduce((acc, cat) => acc + cat.items.length, 0);
   }, []);
 
-  // Хоткей: нажатие '/' фокусирует поиск
+  // Хоткей: нажатие '/' фокусирует поиск, Esc сбрасывает
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === '/' && document.activeElement !== searchInputRef.current) {
@@ -111,9 +114,21 @@ export default function App() {
   return (
     <div className="flex h-screen w-screen overflow-hidden bg-[#07090e] text-[#e6edf3] font-sans selection:bg-sky-500/25 selection:text-sky-200">
       
-      {/* Сайдбар */}
-      <aside className="w-64 bg-[#0d1117]/95 border-r border-[#1e242e] flex flex-col flex-shrink-0 z-20 backdrop-blur-xl">
-        {/* Логотип */}
+      {/* Затемнение фона при открытом сайдбаре на мобилках */}
+      {isSidebarOpen && (
+        <div 
+          onClick={() => setIsSidebarOpen(false)}
+          className="fixed inset-0 bg-black/70 backdrop-blur-sm z-40 md:hidden transition-opacity duration-200"
+        />
+      )}
+
+      {/* Сайдбар: скрыт за экраном на мобилке (-translate-x-full), статичен на десктопе */}
+      <aside className={`
+        fixed inset-y-0 left-0 z-50 w-72 bg-[#0d1117] border-r border-[#1e242e] flex flex-col flex-shrink-0
+        transition-transform duration-300 ease-in-out md:static md:w-64 md:translate-x-0
+        ${isSidebarOpen ? 'translate-x-0 shadow-2xl' : '-translate-x-full'}
+      `}>
+        {/* Логотип + кнопка закрытия */}
         <div className="h-14 px-4 border-b border-[#1e242e] flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <div className="relative flex items-center justify-center w-7 h-7 rounded-lg bg-gradient-to-br from-emerald-400 to-sky-500 text-black shadow-[0_0_12px_rgba(52,211,153,0.35)]">
@@ -124,9 +139,20 @@ export default function App() {
               <span className="text-[10px] text-zinc-500 font-mono tracking-tight block -mt-0.5">Knowledge Base</span>
             </div>
           </div>
-          <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-            PRO
-          </span>
+
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+              PRO
+            </span>
+            <button 
+              type="button"
+              onClick={() => setIsSidebarOpen(false)}
+              className="p-1 text-zinc-400 hover:text-white rounded-md md:hidden"
+              aria-label="Закрыть меню"
+            >
+              <X size={18} />
+            </button>
+          </div>
         </div>
 
         {/* Навигация */}
@@ -139,12 +165,14 @@ export default function App() {
             return (
               <button
                 key={cat.id}
+                type="button"
                 onClick={() => {
                   setSelectedCatId(cat.id);
                   setActiveSubCat('all');
                   setSearchQuery('');
+                  setIsSidebarOpen(false);
                 }}
-                className={`w-full group flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium transition-all duration-150 cursor-pointer ${
+                className={`w-full group flex items-center justify-between px-3 py-2.5 md:py-2 rounded-lg text-xs font-medium transition-all duration-150 cursor-pointer ${
                   isActive
                     ? 'bg-gradient-to-r from-sky-500/15 to-transparent text-white border-l-2 border-sky-400 shadow-[inset_0_0_12px_rgba(56,139,253,0.06)]'
                     : 'text-zinc-400 hover:bg-[#161c24] hover:text-zinc-200'
@@ -179,35 +207,57 @@ export default function App() {
       </aside>
 
       {/* Основной контент */}
-      <main className="flex-1 flex flex-col overflow-hidden bg-[#07090e]">
-        {/* Хедер с поиском */}
-        <header className="h-14 px-6 bg-[#0d1117]/80 border-b border-[#1e242e] flex items-center justify-between gap-4 backdrop-blur-md z-10">
+      <main className="flex-1 flex flex-col min-w-0 overflow-hidden bg-[#07090e]">
+        {/* Хедер с поиском и кнопкой бургера */}
+        <header className="h-14 px-3 sm:px-6 bg-[#0d1117]/80 border-b border-[#1e242e] flex items-center justify-between gap-2.5 backdrop-blur-md z-10 flex-shrink-0">
+          
+          {/* Кнопка бургера для мобильных устройств */}
+          <button
+            type="button"
+            onClick={() => setIsSidebarOpen(true)}
+            className="p-2 -ml-1 text-zinc-400 hover:text-white rounded-lg hover:bg-[#161c24] md:hidden flex-shrink-0"
+            aria-label="Открыть меню"
+          >
+            <Menu size={20} />
+          </button>
+
           <div className="relative flex items-center w-full max-w-2xl">
-            <Search size={15} className="absolute left-3.5 text-zinc-500 pointer-events-none" />
+            <Search size={15} className="absolute left-3 text-zinc-500 pointer-events-none" />
             <input
               ref={searchInputRef}
               type="text"
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
-              placeholder="Глобальный поиск по всем 830+ командам, флагам и описаниям..."
-              className="w-full bg-[#07090e] border border-[#212733] hover:border-zinc-700 focus:border-sky-500 rounded-lg pl-9 pr-14 py-2 text-xs font-mono text-white placeholder-zinc-500 outline-none transition-all shadow-inner"
+              placeholder="Поиск по 830+ командам и флагам..."
+              className="w-full bg-[#07090e] border border-[#212733] hover:border-zinc-700 focus:border-sky-500 rounded-lg pl-9 pr-8 sm:pr-12 py-2 text-xs font-mono text-white placeholder-zinc-500 outline-none transition-all shadow-inner"
             />
-            <div className="absolute right-3 flex items-center gap-1 pointer-events-none">
-              <kbd className="px-1.5 py-0.5 text-[10px] font-mono bg-[#161c24] text-zinc-400 rounded border border-[#262c36]">
-                /
-              </kbd>
-            </div>
+            {/* Кнопка сброса поиска или хоткей */}
+            {searchQuery ? (
+              <button 
+                type="button"
+                onClick={() => setSearchQuery('')}
+                className="absolute right-2.5 text-zinc-500 hover:text-zinc-300 p-0.5"
+              >
+                <X size={14} />
+              </button>
+            ) : (
+              <div className="absolute right-3 hidden sm:flex items-center gap-1 pointer-events-none">
+                <kbd className="px-1.5 py-0.5 text-[10px] font-mono bg-[#161c24] text-zinc-400 rounded border border-[#262c36]">
+                  /
+                </kbd>
+              </div>
+            )}
           </div>
 
-          <div className="flex items-center gap-2 text-xs text-zinc-500 font-mono hidden sm:flex">
+          <div className="hidden lg:flex items-center gap-2 text-xs text-zinc-500 font-mono flex-shrink-0">
             <Sparkles size={14} className="text-amber-400/80" />
             <span>Click card to copy</span>
           </div>
         </header>
 
-        {/* Теги-подкатегории */}
+        {/* Теги-подкатегории со свайпом */}
         {!searchQuery && subCategories.length > 1 && (
-          <div className="px-6 py-2.5 bg-[#0a0d14] border-b border-[#1b202a] flex items-center gap-1.5 overflow-x-auto custom-scrollbar">
+          <div className="px-3 sm:px-6 py-2 bg-[#0a0d14] border-b border-[#1b202a] flex items-center gap-1.5 overflow-x-auto no-scrollbar flex-shrink-0">
             {subCategories.map(sub => {
               const isAll = sub === 'all';
               const isSelected = activeSubCat === sub;
@@ -218,8 +268,9 @@ export default function App() {
               return (
                 <button
                   key={sub}
+                  type="button"
                   onClick={() => setActiveSubCat(sub)}
-                  className={`px-3 py-1 rounded-md text-[11px] font-mono transition-all duration-150 whitespace-nowrap flex items-center gap-1.5 cursor-pointer ${
+                  className={`px-2.5 py-1 rounded-md text-[11px] font-mono transition-all duration-150 whitespace-nowrap flex items-center gap-1.5 cursor-pointer flex-shrink-0 ${
                     isSelected
                       ? 'bg-sky-500/20 text-sky-200 border border-sky-500/50 shadow-sm'
                       : 'bg-[#111620] text-zinc-400 hover:bg-[#181f2c] hover:text-zinc-200 border border-[#21262d]'
@@ -236,21 +287,21 @@ export default function App() {
         )}
 
         {/* Сетка сниппетов */}
-        <section className="flex-1 overflow-y-auto p-6 space-y-4 custom-scrollbar">
+        <section className="flex-1 overflow-y-auto p-3.5 sm:p-6 space-y-4 custom-scrollbar">
           {/* Заголовок текущего раздела */}
-          <div className="flex items-baseline justify-between border-b border-[#1e242e] pb-3">
+          <div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between border-b border-[#1e242e] pb-3 gap-1">
             <div>
               <div className="flex items-center gap-2">
-                <h2 className="text-lg font-bold text-white tracking-tight">
+                <h2 className="text-base sm:text-lg font-bold text-white tracking-tight">
                   {searchQuery ? `Результаты поиска` : activeCategory?.title}
                 </h2>
                 {!searchQuery && (
-                  <span className="text-[11px] font-mono px-2 py-0.5 rounded-full bg-sky-500/10 text-sky-400 border border-sky-500/20">
-                    {filteredItems.length} сниппетов
+                  <span className="text-[10px] sm:text-[11px] font-mono px-2 py-0.5 rounded-full bg-sky-500/10 text-sky-400 border border-sky-500/20">
+                    {filteredItems.length}
                   </span>
                 )}
               </div>
-              <p className="text-xs text-zinc-400 mt-1">
+              <p className="text-xs text-zinc-400 mt-0.5 sm:mt-1">
                 {searchQuery 
                   ? `По запросу "${searchQuery}" найдено: ${filteredItems.length}` 
                   : activeCategory?.desc}
@@ -258,14 +309,15 @@ export default function App() {
             </div>
           </div>
 
-          {/* Карточки в 2-3 колонки */}
+          {/* Карточки */}
           {filteredItems.length === 0 ? (
-            <div className="py-24 text-center">
+            <div className="py-20 text-center">
               <div className="w-12 h-12 rounded-xl bg-[#12161f] border border-[#21262d] flex items-center justify-center mx-auto mb-3 text-zinc-500">
                 <Search size={20} />
               </div>
               <p className="text-xs font-mono text-zinc-400">Ничего не найдено по данному запросу</p>
               <button 
+                type="button"
                 onClick={() => { setSearchQuery(''); setActiveSubCat('all'); }}
                 className="mt-3 text-xs text-sky-400 hover:underline font-mono cursor-pointer"
               >
@@ -273,7 +325,7 @@ export default function App() {
               </button>
             </div>
           ) : (
-            <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-3">
               {filteredItems.map(item => {
                 const isCopied = copiedId === item.id;
                 const isMultiLine = item.code.includes('\n');
@@ -283,7 +335,7 @@ export default function App() {
                   <div
                     key={item.id}
                     onClick={() => handleCopy(item.id, item.code)}
-                    className="group relative p-3.5 rounded-xl bg-[#0e121a] hover:bg-[#121722] border border-[#1b222d] hover:border-sky-500/40 transition-all duration-150 flex flex-col justify-between gap-2.5 cursor-pointer shadow-sm hover:shadow-[0_4px_20px_rgba(0,0,0,0.35)]"
+                    className="group relative p-3 sm:p-3.5 rounded-xl bg-[#0e121a] hover:bg-[#121722] border border-[#1b222d] hover:border-sky-500/40 transition-all duration-150 flex flex-col justify-between gap-2.5 cursor-pointer shadow-sm"
                   >
                     {/* Верхняя строка: тег + кнопка копирования */}
                     <div className="flex items-center justify-between gap-2">
@@ -299,7 +351,7 @@ export default function App() {
                           e.stopPropagation();
                           handleCopy(item.id, item.code);
                         }}
-                        className={`flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-mono border transition-all duration-150 ${
+                        className={`flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-mono border transition-all duration-150 flex-shrink-0 ${
                           isCopied
                             ? 'bg-emerald-950/80 border-emerald-500/80 text-emerald-300'
                             : 'bg-[#151a24] border-[#252c3a] text-zinc-400 group-hover:text-white group-hover:border-zinc-500'
@@ -311,7 +363,7 @@ export default function App() {
                     </div>
 
                     {/* Поле с кодом */}
-                    <div className="relative">
+                    <div className="relative min-w-0">
                       <code className="block text-xs font-mono text-sky-300 bg-[#06080d] p-2.5 rounded-lg border border-[#1a202c] overflow-x-auto whitespace-pre leading-relaxed group-hover:border-[#273244] transition-colors selection:bg-sky-500/30">
                         {isMultiLine ? item.code : firstLine}
                       </code>
